@@ -218,3 +218,10 @@ local_s3/
 
 # Kaggle credentials
 kaggle.json
+
+# Model files (large, use DVC or MLflow registry instead)
+models/*.keras
+models/*.h5
+models/*.pkl
+*.keras
+*.h5
