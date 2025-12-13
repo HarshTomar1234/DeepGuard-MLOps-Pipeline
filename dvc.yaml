@@ -1,0 +1,88 @@
+# DVC Pipeline for DeepGuard MLOps Project
+# =========================================
+# Run with: dvc repro
+# View DAG with: dvc dag
+
+stages:
+  # Stage 1: Data Ingestion
+  # Downloads dataset from Kaggle and organizes into data/raw/
+  data_ingestion:
+    cmd: python -m src.data.data_ingestion
+    deps:
+      - src/data/data_ingestion.py
+    params:
+      - data.dataset_name
+      - data.raw_dir
+    outs:
+      - data/raw
+
+  # Stage 2: Data Preprocessing
+  # Loads images, resizes, normalizes, and creates train/val/test splits
+  data_preprocessing:
+    cmd: python -m src.data.data_preprocessing
+    deps:
+      - data/raw
+      - src/data/data_preprocessing.py
+    params:
+      - preprocessing.image_size
+      - preprocessing.sample_size
+      - preprocessing.validation_split
+      - preprocessing.random_state
+    outs:
+      - data/processed
+
+  # Stage 3: Feature Engineering
+  # Applies data augmentation and prepares features for training
+  feature_engineering:
+    cmd: python -m src.features.feature_engineering
+    deps:
+      - data/processed
+      - src/features/feature_engineering.py
+    params:
+      - augmentation
+    outs:
+      - data/features:
+          persist: true
+
+  # Stage 4: Model Building
+  # Builds and trains the CNN model
+  model_building:
+    cmd: python -m src.model.model_building
+    deps:
+      - data/processed
+      - src/model/model_building.py
+    params:
+      - model.architecture
+      - model.input_shape
+      - training
+    outs:
+      - models:
+          persist: true
+
+  # Stage 5: Model Evaluation
+  # Evaluates the trained model and generates metrics/plots
+  model_evaluation:
+    cmd: python -m src.model.model_evaluation
+    deps:
+      - models
+      - data/processed
+      - src/model/model_evaluation.py
+    metrics:
+      - reports/metrics.json:
+          cache: false
+    outs:
+      - reports/figures:
+          persist: true
+      - reports/experiment_info.json:
+          persist: true
+
+  # Stage 6: Model Registration
+  # Registers the model with MLflow/DagsHub
+  model_registration:
+    cmd: python -m src.model.register_model
+    deps:
+      - reports/experiment_info.json
+      - models
+      - src/model/register_model.py
+    params:
+      - mlflow

@@ -1,0 +1,81 @@
+# DeepGuard MLOps Pipeline Configuration
+# ========================================
+# This file contains all hyperparameters and settings for the DVC pipeline.
+# DVC tracks changes to these parameters and re-runs affected stages.
+
+# Data Configuration
+# ------------------
+data:
+  # Kaggle dataset identifier
+  dataset_name: "birdy654/cifake-real-and-ai-generated-synthetic-images"
+  
+  # Data directories
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  features_dir: "data/features"
+
+# Preprocessing Configuration
+# ---------------------------
+preprocessing:
+  # Target image dimensions (width x height)
+  image_size: 128
+  
+  # Number of samples to use (null = use all data)
+  # Set to a smaller number for faster testing, e.g., 1000
+  sample_size: 1000
+  
+  # Validation split from training data
+  validation_split: 0.2
+  
+  # Random seed for reproducibility
+  random_state: 42
+
+# Data Augmentation Configuration
+# -------------------------------
+augmentation:
+  rotation_range: 20
+  width_shift_range: 0.2
+  height_shift_range: 0.2
+  horizontal_flip: true
+  vertical_flip: false
+  zoom_range: 0.2
+  fill_mode: "nearest"
+
+# Model Configuration
+# -------------------
+model:
+  # Architecture: "SimpleCNN", "DeeperCNN", or "EfficientStyleCNN"
+  architecture: "DeeperCNN"
+  
+  # Input shape (height, width, channels)
+  input_shape: [128, 128, 3]
+
+# Training Configuration
+# ----------------------
+training:
+  epochs: 20
+  batch_size: 32
+  learning_rate: 0.001
+  early_stopping_patience: 5
+
+# MLflow/DagsHub Configuration
+# ----------------------------
+mlflow:
+  # Your DagsHub username
+  dagshub_username: "pythonharsh1234"
+  
+  # Repository name on DagsHub
+  dagshub_repo: "DeepGuard-MLOps-Pipeline"
+  
+  # MLflow experiment name
+  experiment_name: "DeepGuard-Model-Training"
+  
+  # Registered model name in MLflow
+  registered_model_name: "DeepGuard-Classifier"
+
+# Output Directories
+# ------------------
+outputs:
+  models_dir: "models"
+  reports_dir: "reports"
+  metrics_file: "metrics.json"

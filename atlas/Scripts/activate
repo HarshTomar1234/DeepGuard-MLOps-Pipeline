@@ -40,10 +40,10 @@ deactivate nondestructive
 if [ "${OSTYPE:-}" = "cygwin" ] || [ "${OSTYPE:-}" = "msys" ] ; then
     # transform D:\path\to\venv to /d/path/to/venv on MSYS
     # and to /cygdrive/d/path/to/venv on Cygwin
-    export VIRTUAL_ENV=$(cygpath 'D:\MLOps-Text-Classification-Pipeline\atlas')
+    export VIRTUAL_ENV=$(cygpath 'D:\DeepGuard-MLOps-Pipeline\atlas')
 else
     # use the path as-is
-    export VIRTUAL_ENV='D:\MLOps-Text-Classification-Pipeline\atlas'
+    export VIRTUAL_ENV='D:\DeepGuard-MLOps-Pipeline\atlas'
 fi
 
 _OLD_VIRTUAL_PATH="$PATH"

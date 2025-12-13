@@ -1,4 +1,4 @@
-#!D:\MLOps-Text-Classification-Pipeline\atlas\Scripts\python.exe
+#!D:\DeepGuard-MLOps-Pipeline\atlas\Scripts\python.exe
 
 import logging
 import os

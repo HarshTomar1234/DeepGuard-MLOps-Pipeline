@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set "VIRTUAL_ENV=D:\MLOps-Text-Classification-Pipeline\atlas"
+set "VIRTUAL_ENV=D:\DeepGuard-MLOps-Pipeline\atlas"
 
 if not defined PROMPT set PROMPT=$P$G
 
