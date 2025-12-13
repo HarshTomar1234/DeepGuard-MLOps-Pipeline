@@ -230,3 +230,5 @@ data/raw
 data/processed
 data/features
 models/
+reports/figures/
+reports/experiment_info.json
