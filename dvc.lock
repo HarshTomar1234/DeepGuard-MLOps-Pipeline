@@ -1,0 +1,20 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python -m src.data.data_ingestion
+    deps:
+    - path: src/data/data_ingestion.py
+      hash: md5
+      md5: 59b856ad2413a40c13ad13fa8cfb0e95
+      size: 6364
+    params:
+      params.yaml:
+        data.dataset_name: 
+          birdy654/cifake-real-and-ai-generated-synthetic-images
+        data.raw_dir: data/raw
+    outs:
+    - path: data/raw
+      hash: md5
+      md5: 368eb180912a1a0a8a728661e983a66a.dir
+      size: 110717853
+      nfiles: 120000
