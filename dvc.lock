@@ -100,3 +100,57 @@ stages:
       md5: 14b5739be026c06c53fcee8108e8505b.dir
       size: 561424161
       nfiles: 8
+  model_evaluation:
+    cmd: python -m src.model.model_evaluation
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 97f69cc4b3dcb3a0d917897dc8622032.dir
+      size: 393232768
+      nfiles: 6
+    - path: models
+      hash: md5
+      md5: 14b5739be026c06c53fcee8108e8505b.dir
+      size: 561424161
+      nfiles: 8
+    - path: src/model/model_evaluation.py
+      hash: md5
+      md5: 0da0544b67312804b36352aee08afcfb
+      size: 14393
+    outs:
+    - path: reports/experiment_info.json
+      hash: md5
+      md5: e116d47f1b75fa01bb0120056a77ed9e
+      size: 489
+    - path: reports/figures
+      hash: md5
+      md5: e9d376b331a1cbbc305c4f9d6ed533da.dir
+      size: 674971
+      nfiles: 12
+    - path: reports/metrics.json
+      hash: md5
+      md5: cc14566b40e6ee591d92dff1b1b6a4c3
+      size: 149
+  model_registration:
+    cmd: python -m src.model.register_model
+    deps:
+    - path: models
+      hash: md5
+      md5: 14b5739be026c06c53fcee8108e8505b.dir
+      size: 561424161
+      nfiles: 8
+    - path: reports/experiment_info.json
+      hash: md5
+      md5: e116d47f1b75fa01bb0120056a77ed9e
+      size: 489
+    - path: src/model/register_model.py
+      hash: md5
+      md5: c0b8e4fd31cbcab9bd4ec1078a57ae36
+      size: 14866
+    params:
+      params.yaml:
+        mlflow:
+          dagshub_username: pythonharsh1234
+          dagshub_repo: DeepGuard-MLOps-Pipeline
+          experiment_name: DeepGuard-Model-Training
+          registered_model_name: DeepGuard-Classifier
