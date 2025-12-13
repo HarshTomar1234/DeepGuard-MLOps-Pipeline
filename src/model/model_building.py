@@ -352,7 +352,7 @@ if __name__ == "__main__":
     )
     
     # Load data and run
-    from src.data import FeatureEngineering
+    from src.features import FeatureEngineering
     
     fe = FeatureEngineering()
     data = fe.run()

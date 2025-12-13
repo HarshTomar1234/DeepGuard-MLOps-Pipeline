@@ -18,3 +18,85 @@ stages:
       md5: 368eb180912a1a0a8a728661e983a66a.dir
       size: 110717853
       nfiles: 120000
+  data_preprocessing:
+    cmd: python -m src.data.data_preprocessing
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 368eb180912a1a0a8a728661e983a66a.dir
+      size: 110717853
+      nfiles: 120000
+    - path: src/data/data_preprocessing.py
+      hash: md5
+      md5: 0262ab179cd4964380da4bcc96ccfc90
+      size: 8958
+    params:
+      params.yaml:
+        preprocessing.image_size: 128
+        preprocessing.random_state: 42
+        preprocessing.sample_size: 1000
+        preprocessing.validation_split: 0.2
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: 97f69cc4b3dcb3a0d917897dc8622032.dir
+      size: 393232768
+      nfiles: 6
+  feature_engineering:
+    cmd: python -m src.features.feature_engineering
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 97f69cc4b3dcb3a0d917897dc8622032.dir
+      size: 393232768
+      nfiles: 6
+    - path: src/features/feature_engineering.py
+      hash: md5
+      md5: 3eb7503fc78247e103bd756e46244041
+      size: 12769
+    params:
+      params.yaml:
+        augmentation:
+          rotation_range: 20
+          width_shift_range: 0.2
+          height_shift_range: 0.2
+          horizontal_flip: true
+          vertical_flip: false
+          zoom_range: 0.2
+          fill_mode: nearest
+    outs:
+    - path: data/features
+      hash: md5
+      md5: 06a1028009efcac0b365cb0d486b6f81.dir
+      size: 550
+      nfiles: 3
+  model_building:
+    cmd: python -m src.model.model_building
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 97f69cc4b3dcb3a0d917897dc8622032.dir
+      size: 393232768
+      nfiles: 6
+    - path: src/model/model_building.py
+      hash: md5
+      md5: 7a65dd7057abfe6514225cd6326d9c1b
+      size: 12260
+    params:
+      params.yaml:
+        model.architecture: DeeperCNN
+        model.input_shape:
+        - 128
+        - 128
+        - 3
+        training:
+          epochs: 20
+          batch_size: 32
+          learning_rate: 0.001
+          early_stopping_patience: 5
+    outs:
+    - path: models
+      hash: md5
+      md5: 14b5739be026c06c53fcee8108e8505b.dir
+      size: 561424161
+      nfiles: 8
