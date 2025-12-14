@@ -28,6 +28,7 @@ class ModelBuilder:
     - SimpleCNN: Basic 3-layer CNN for baseline
     - DeeperCNN: Deeper architecture with batch normalization
     - EfficientStyleCNN: Efficient architecture with separable convolutions
+    - EfficientNetB0Transfer: Transfer learning with pretrained EfficientNetB0 (RECOMMENDED)
     """
     
     def __init__(self, config_path: str = "params.yaml"):
@@ -173,6 +174,108 @@ class ModelBuilder:
         ], name=name)
         
         return model
+    
+    def build_efficientnet_transfer(self, name: str = "EfficientNetB0Transfer") -> keras.Model:
+        """
+        Build EfficientNetB0-based model with transfer learning.
+        
+        Uses pretrained ImageNet weights for better generalization.
+        Fine-tunes the last 20 layers for deepfake-specific features.
+        
+        Args:
+            name: Model name
+            
+        Returns:
+            Compiled Keras model
+        """
+        logger.info(f"Building {name} architecture with transfer learning...")
+        logger.info("Loading EfficientNetB0 pretrained on ImageNet...")
+        
+        # Load pretrained EfficientNetB0 (without top classification layer)
+        base_model = tf.keras.applications.EfficientNetB0(
+            weights='imagenet',
+            include_top=False,
+            input_shape=self.input_shape
+        )
+        
+        # Fine-tune strategy: Unfreeze the last 20 layers
+        # First freeze all layers
+        base_model.trainable = True
+        
+        # Freeze all layers except the last 20
+        for layer in base_model.layers[:-20]:
+            layer.trainable = False
+            
+        # Count trainable vs frozen
+        trainable_count = sum(1 for layer in base_model.layers if layer.trainable)
+        frozen_count = len(base_model.layers) - trainable_count
+        logger.info(f"Base model: {frozen_count} frozen layers, {trainable_count} trainable layers")
+        
+        # Build custom classifier head
+        model = models.Sequential([
+            base_model,
+            layers.GlobalAveragePooling2D(),
+            layers.BatchNormalization(),
+            layers.Dense(256, activation='relu'),
+            layers.Dropout(0.5),
+            layers.Dense(128, activation='relu'),
+            layers.Dropout(0.3),
+            layers.Dense(1, activation='sigmoid')
+        ], name=name)
+        
+        return model
+    
+    def build_xception_transfer(self, name: str = "XceptionTransfer") -> keras.Model:
+        """
+        Build Xception-based model with transfer learning.
+        
+        Xception is specifically effective for deepfake detection due to its
+        depthwise separable convolutions that capture subtle facial artifacts.
+        Research shows 87.7% accuracy on deepfake benchmarks.
+        
+        Args:
+            name: Model name
+            
+        Returns:
+            Compiled Keras model
+        """
+        logger.info(f"Building {name} architecture with transfer learning...")
+        logger.info("Loading Xception pretrained on ImageNet...")
+        
+        # Load pretrained Xception (without top classification layer)
+        # Xception requires minimum 71x71 input, our 128x128 is fine
+        base_model = tf.keras.applications.Xception(
+            weights='imagenet',
+            include_top=False,
+            input_shape=self.input_shape
+        )
+        
+        # Fine-tune strategy: Unfreeze the last 30 layers for Xception
+        # Xception has 132 layers - we'll train the last 30
+        base_model.trainable = True
+        
+        # Freeze all layers except the last 30
+        for layer in base_model.layers[:-30]:
+            layer.trainable = False
+            
+        # Count trainable vs frozen
+        trainable_count = sum(1 for layer in base_model.layers if layer.trainable)
+        frozen_count = len(base_model.layers) - trainable_count
+        logger.info(f"Base model: {frozen_count} frozen layers, {trainable_count} trainable layers")
+        
+        # Build custom classifier head optimized for binary classification
+        model = models.Sequential([
+            base_model,
+            layers.GlobalAveragePooling2D(),
+            layers.BatchNormalization(),
+            layers.Dense(512, activation='relu', kernel_regularizer=keras.regularizers.l2(0.01)),
+            layers.Dropout(0.5),
+            layers.Dense(256, activation='relu', kernel_regularizer=keras.regularizers.l2(0.01)),
+            layers.Dropout(0.4),
+            layers.Dense(1, activation='sigmoid')
+        ], name=name)
+        
+        return model
         
     def build_model(self, architecture: Optional[str] = None) -> keras.Model:
         """
@@ -192,9 +295,13 @@ class ModelBuilder:
             model = self.build_deeper_cnn()
         elif arch == "EfficientStyleCNN":
             model = self.build_efficient_style_cnn()
+        elif arch == "EfficientNetB0Transfer":
+            model = self.build_efficientnet_transfer()
+        elif arch == "XceptionTransfer":
+            model = self.build_xception_transfer()
         else:
-            logger.warning(f"Unknown architecture {arch}, using DeeperCNN")
-            model = self.build_deeper_cnn()
+            logger.warning(f"Unknown architecture {arch}, using XceptionTransfer")
+            model = self.build_xception_transfer()
             
         # Compile model
         optimizer = keras.optimizers.Adam(learning_rate=self.learning_rate)
