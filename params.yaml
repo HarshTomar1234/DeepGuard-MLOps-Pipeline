@@ -22,7 +22,7 @@ preprocessing:
   
   # Number of samples to use (null = use all data)
   # Set to a smaller number for faster testing, e.g., 1000
-  sample_size: 1000
+  sample_size: 8000
   
   # Validation split from training data
   validation_split: 0.2
