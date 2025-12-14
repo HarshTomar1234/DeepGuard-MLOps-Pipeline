@@ -232,3 +232,4 @@ data/features
 models/
 reports/figures/
 reports/experiment_info.json
+/models
