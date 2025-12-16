@@ -69,7 +69,6 @@ def predict():
             'label': label,
             'confidence': f"{display_confidence * 100:.2f}%",
             'raw_score': confidence,
-            'exif': exif_data,
             'fft': fft_data
         })
         
