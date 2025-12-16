@@ -13,10 +13,9 @@ tf.get_logger().setLevel('ERROR')
 
 
 def load_model(model_path='flask_app/model/deepfake_model.keras'):
-fake_files = sorted(os.listdir(fake_dir))[:5]    if not os.path.exists(model_path):
+    if not os.path.exists(model_path):
         raise FileNotFoundError(f"Model file not found: {model_path}")
     return tf.keras.models.load_model(model_path)
-
 
 def predict_images(model, directory, num_images=5):
     """
