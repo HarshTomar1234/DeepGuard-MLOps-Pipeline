@@ -46,8 +46,6 @@ def predict():
         if processed_img is None:
             return jsonify({'error': 'Invalid image format'}), 400
         
-        # Get EXIF metadata
-        exif_data = extract_exif(file)
         
         # Generate FFT visualization
         fft_data = generate_fft_visualization(file)
