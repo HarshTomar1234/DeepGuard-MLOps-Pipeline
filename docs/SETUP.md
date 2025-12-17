@@ -1,10 +1,10 @@
-# DagsHub & MLflow Setup Guide
+# DagsHub and MLflow Setup Guide
 
-> **Purpose**: Step-by-step instructions for setting up DagsHub and MLflow integration for experiment tracking and model registry.
+This guide provides step-by-step instructions for setting up DagsHub and MLflow integration for experiment tracking and model registry.
 
 ---
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Python 3.8+ installed
 - Git installed and configured
@@ -13,7 +13,7 @@
 
 ---
 
-## 🚀 Step 1: Create DagsHub Repository
+## Step 1: Create DagsHub Repository
 
 ### 1.1 Sign Up / Login
 
@@ -23,27 +23,27 @@
 
 ### 1.2 Create New Repository
 
-1. Click **"New Repository"** or **"+"** button
+1. Click "New Repository" or "+" button
 2. Fill in repository details:
-   - **Name**: `DeepGuard-MLOps-Pipeline`
-   - **Description**: AI-generated image detection with MLOps
-   - **Visibility**: Public or Private
-3. Click **"Create Repository"**
+   - Name: `DeepGuard-MLOps-Pipeline`
+   - Description: AI-generated image detection with MLOps
+   - Visibility: Public or Private
+3. Click "Create Repository"
 
 ### 1.3 Get Your Credentials
 
 1. Go to your repository settings
-2. Navigate to **"Integrations"** → **"MLflow"**
+2. Navigate to "Integrations" then "MLflow"
 3. Note down:
-   - **Tracking URI**: `https://dagshub.com/<username>/<repo>.mlflow`
-   - **Username**: Your DagsHub username
-   - **Token**: Generate an access token if needed
+   - Tracking URI: `https://dagshub.com/<username>/<repo>.mlflow`
+   - Username: Your DagsHub username
+   - Token: Generate an access token if needed
 
 ---
 
-## 🔧 Step 2: Configure Local Environment
+## Step 2: Configure Local Environment
 
-### 2.1 Create `.env` File
+### 2.1 Create .env File
 
 Create a `.env` file in the project root (this file is gitignored):
 
@@ -68,57 +68,39 @@ Ensure your `params.yaml` has the correct MLflow configuration:
 
 ```yaml
 mlflow:
-  # Your DagsHub username
   dagshub_username: "your_username"
-  
-  # Repository name on DagsHub
   dagshub_repo: "DeepGuard-MLOps-Pipeline"
-  
-  # MLflow experiment name
   experiment_name: "DeepGuard-Model-Training"
-  
-  # Registered model name in MLflow
   registered_model_name: "DeepGuard-Classifier"
 ```
 
 ---
 
-## 🔗 Step 3: Connect Git Remote
+## Step 3: Connect Git Remote
 
 ### 3.1 Add DagsHub as Remote
 
 ```powershell
-# Add DagsHub remote
 git remote add dagshub https://dagshub.com/your_username/DeepGuard-MLOps-Pipeline.git
-
-# Verify remotes
 git remote -v
 ```
 
 ### 3.2 Push to DagsHub
 
 ```powershell
-# Push main branch
 git push dagshub main
-
-# Push DVC tracked data (if using DagsHub storage)
-dvc remote add dagshub https://dagshub.com/your_username/DeepGuard-MLOps-Pipeline.dvc
-dvc push -r dagshub
 ```
 
 ---
 
-## ⚙️ Step 4: Configure DVC Remote (Optional)
+## Step 4: Configure DVC Remote (Optional)
 
 If you want to use DagsHub for DVC storage:
 
 ### 4.1 Add DVC Remote
 
 ```powershell
-# Add DagsHub as DVC remote
 dvc remote add -d dagshub https://dagshub.com/your_username/DeepGuard-MLOps-Pipeline.dvc
-
-# Set credentials
 dvc remote modify dagshub --local auth basic
 dvc remote modify dagshub --local user your_dagshub_username
 dvc remote modify dagshub --local password your_dagshub_token
@@ -132,40 +114,37 @@ dvc push
 
 ---
 
-## 🧪 Step 5: Verify MLflow Connection
+## Step 5: Verify MLflow Connection
 
 ### 5.1 Test Connection Script
 
 Create a test script or run in Python:
 
 ```python
-import os
 import mlflow
 import dagshub
 
-# Initialize DagsHub
 dagshub.init(
     repo_owner="your_username",
     repo_name="DeepGuard-MLOps-Pipeline",
     mlflow=True
 )
 
-# Test logging
 with mlflow.start_run(run_name="test-connection"):
     mlflow.log_param("test_param", "hello")
     mlflow.log_metric("test_metric", 1.0)
-    print("✅ MLflow connection successful!")
+    print("MLflow connection successful!")
 ```
 
 ### 5.2 View in DagsHub
 
 1. Go to your DagsHub repository
-2. Click on **"Experiments"** tab
+2. Click on "Experiments" tab
 3. You should see your test run
 
 ---
 
-## 📊 Step 6: Using MLflow Tracking
+## Step 6: Using MLflow Tracking
 
 ### Logging Parameters
 
@@ -200,12 +179,11 @@ mlflow.log_artifacts("reports/figures", "figures")
 
 ---
 
-## 📦 Step 7: Model Registry
+## Step 7: Model Registry
 
 ### Register a Model
 
 ```python
-# During training
 mlflow.keras.log_model(
     model,
     "model",
@@ -249,7 +227,7 @@ model = mlflow.keras.load_model("models:/DeepGuard-Classifier/Production")
 
 ---
 
-## 🔍 Step 8: DagsHub Dashboard Features
+## Step 8: DagsHub Dashboard Features
 
 ### Experiments View
 
@@ -271,21 +249,20 @@ model = mlflow.keras.load_model("models:/DeepGuard-Classifier/Production")
 
 ---
 
-## ❗ Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
 | Issue | Solution |
 |-------|----------|
-| `401 Unauthorized` | Check DAGSHUB_TOKEN is valid |
-| `Cannot connect to MLflow` | Verify MLFLOW_TRACKING_URI format |
-| `DVC push fails` | Ensure DVC remote credentials are set |
-| `Experiment not found` | Run `dagshub.init()` before logging |
+| 401 Unauthorized | Check DAGSHUB_TOKEN is valid |
+| Cannot connect to MLflow | Verify MLFLOW_TRACKING_URI format |
+| DVC push fails | Ensure DVC remote credentials are set |
+| Experiment not found | Run `dagshub.init()` before logging |
 
 ### Reset MLflow Credentials
 
 ```powershell
-# Clear cached credentials
 $env:MLFLOW_TRACKING_USERNAME = "your_username"
 $env:MLFLOW_TRACKING_PASSWORD = "your_token"
 ```
@@ -293,25 +270,24 @@ $env:MLFLOW_TRACKING_PASSWORD = "your_token"
 ### Verify Environment Variables
 
 ```powershell
-# Check if variables are set
 echo $env:DAGSHUB_USERNAME
 echo $env:MLFLOW_TRACKING_URI
 ```
 
 ---
 
-## 🔗 Useful Links
+## Useful Links
 
 | Resource | URL |
 |----------|-----|
-| DagsHub Docs | [docs.dagshub.com](https://docs.dagshub.com) |
-| MLflow Docs | [mlflow.org/docs](https://mlflow.org/docs/latest/index.html) |
-| DVC Docs | [dvc.org/doc](https://dvc.org/doc) |
-| Kaggle API | [github.com/Kaggle/kaggle-api](https://github.com/Kaggle/kaggle-api) |
+| DagsHub Docs | https://docs.dagshub.com |
+| MLflow Docs | https://mlflow.org/docs/latest/index.html |
+| DVC Docs | https://dvc.org/doc |
+| Kaggle API | https://github.com/Kaggle/kaggle-api |
 
 ---
 
-## 📚 Related Documentation
+## Related Documentation
 
 - [Architecture Guide](ARCHITECTURE.md) - System design overview
 - [Quickstart](QUICKSTART.md) - Running the pipeline from scratch
