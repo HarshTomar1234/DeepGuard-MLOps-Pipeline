@@ -1,0 +1,52 @@
+# Ignore these in Docker build
+# =============================
+
+# Git
+.git
+.gitignore
+
+# DVC
+.dvc
+*.dvc
+local_s3/
+
+# Data (not needed in container - model is in flask_app/model/)
+data/
+atlas/
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.egg-info
+.eggs
+
+# IDE
+.vscode
+.idea
+*.swp
+
+# Notebooks
+notebooks/
+*.ipynb
+
+# Documentation
+docs/
+*.md
+*.rst
+*.txt
+!requirements.txt
+
+# Tests
+tests/
+
+# Reports
+reports/
+
+# Models (except flask_app/model)
+models/
+
+# Misc
+.env
+*.log
+.DS_Store
