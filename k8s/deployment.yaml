@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deepguard-app
+  labels:
+    app: deepguard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deepguard
+  template:
+    metadata:
+      labels:
+        app: deepguard
+    spec:
+      containers:
+      - name: deepguard
+        image: 540040217669.dkr.ecr.us-east-1.amazonaws.com/deepguard-app:latest
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1536Mi"
+            cpu: "1000m"
+        env:
+        - name: FLASK_ENV
+          value: "production"
