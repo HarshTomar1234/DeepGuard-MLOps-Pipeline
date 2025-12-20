@@ -241,3 +241,9 @@ reports/experiment_info.json
 
 # Hugging Face Space (separate repo)
 huggingface_space/
+
+
+# secrets files
+
+deepguard-monitoring.pem
+dvc-s3-user_accesskeys.csv
